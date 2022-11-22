@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probe-cosmic-windows
+  namespace: probe-cosmic
+  labels:
+    app: probe-cosmic-windows
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: probe-cosmic-windows
+  template:
+    metadata:
+      labels:
+        app: probe-cosmic-windows
+    spec:
+      containers:
+      - env:
+        name: probe-cosmic-windows
+        image: cosmicgallatinacr.azurecr.cn/probe/cosmic-windows
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        kubernetes.io/os: windows
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: probe-cosmic-windows
+  namespace: probe-cosmic
+spec:
+  type: LoadBalancer
+  selector:
+    app: probe-cosmic-windows
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080
